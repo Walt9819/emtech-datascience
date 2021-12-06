@@ -24,7 +24,77 @@ while not (usr == "admin" and passw == "12345"):
     intentos += 1
 
 
+
 #### 1. Productos más vendidos y rezagados
+print(f"{'*' * 10} Productos más vendidos y rezagados {'*' * 10}", end="\n\n") # título
+
+
+def contabilizarApariciones(datos, elemento_con_id_producto=0):
+    """
+    Cuenta el número de incidencias de un producto en un arreglo de datos.
+    Regresa un diccionario con las llaves siendo el id de los productos, 
+    y su valor el número de apariciones que tuvo en `datos`.
+    """
+    repeticiones = {} # si suponemos que los id son continuos y ordenados, podría ser un arreglo
+    for dat in datos:
+        id_producto = dat[elemento_con_id_producto]
+        # consideramos esta como su primera aparición si no había antes, de lo contrario le sumamos una más
+        if id_producto not in repeticiones.keys():
+            repeticiones[id_producto] = 1
+        else:
+            repeticiones[id_producto] += 1
+    return repeticiones
+
+
+def ordenarDiccionario(d, descendente=True):
+    """
+    Toma un diccionario y lo ordena según sus valores.
+    Regresa un arreglo ordenado de tuplas, con formato `(key, value)`.
+    Adaptado de: https://stackoverflow.com/questions/613183/how-do-i-sort-a-dictionary-by-value
+    """
+    return [(k, v) for k, v in sorted(d.items(), key=lambda item: item[1], reverse=descendente)]
+
+
+def buscarProducto(productos, id_producto, elemento_con_id = 0):
+    """
+    Regresa el índice del producto buscado en la lista de productos
+    """
+    for p in productos:
+        if p[elemento_con_id] == id_producto:
+            return p
+
+
+def imprimirTop(productos, n, mayores=True):
+    """
+    Imprime en pantalla la información de los `n` productos con mayor valor (si `mejores`),
+    en caso contrario los de menor valor.
+    """
+    num_productos = len(productos)
+    rango = productos[:n] if mayores else productos[num_productos:num_productos-n-1:-1] # definimos los productos a desplegar dependiendo de si queremos los de mayor o menor valor
+    i = 1 if mayores else num_productos # empezamos en 1 si queremos los mejores, en caso contrario empezamos con número de productos disponibles
+    # recorremos e imprimimos los productos en el rango
+    for prod, venta in rango:
+        producto = buscarProducto(lifestore_products, prod) # buscamos el producto
+        print(f"{i}. ID: {producto[0]}\tNombre: {producto[1]}\nVentas: {venta}\nPrecio: {producto[2]}\nCategoría: {producto[3]}\nInventario: {producto[4]}", end="\n\n")
+        i += 1 if mayores else -1 # aumntamos la posición en uno por cada producto si ascendemos, en caso contrario le restamos
+
+
+## ventas de productos
+ventas = contabilizarApariciones(lifestore_sales, 1) # diccionario con todas las ventas por producto; el id_product es el elemento _1_
+# ordenamos los valores
+ventas = ordenarDiccionario(ventas)
+
+## búsquedas de productos
+busquedas = contabilizarApariciones(lifestore_searches, 1) # diccionario con las búsquedas por producto; el id_product es el elemento _1_
+#ordenamos los valores
+busquedas = ordenarDiccionario(busquedas)
+
+## Top best ventas y búsquedas
+# Ventas
+print(f"{'*' * 5} Mejores productos por ventas:")
+imprimirTop(ventas, 5, mayores=False)
+
+# Búsquedas
 
 
 #### 2. Productos por reseña del servicio
