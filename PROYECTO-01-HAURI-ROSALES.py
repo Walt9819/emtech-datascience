@@ -89,13 +89,24 @@ busquedas = contabilizarApariciones(lifestore_searches, 1) # diccionario con las
 #ordenamos los valores
 busquedas = ordenarDiccionario(busquedas)
 
-## Top best ventas y búsquedas
+## Top mejores ventas y búsquedas
 # Ventas
+print(f"{'-' * 40}\nLos mejores productos\n{'-' * 40}")
 print(f"{'*' * 5} Mejores productos por ventas:")
+imprimirTop(ventas, 5, mayores=True)
+
+# Búsquedas
+print(f"{'*' * 5} Mejores productos por búsqueda:")
+imprimirTop(busquedas, 10, mayores=True)
+
+## Top peores ventas y búsqueda
+print(f"{'-' * 40}\nLos peores productos\n{'-' * 40}")
+print(f"{'*' * 5} Peores productos por ventas:")
 imprimirTop(ventas, 5, mayores=False)
 
 # Búsquedas
-
+print(f"{'*' * 5} Peores productos por búsqueda:")
+imprimirTop(busquedas, 10, mayores=False)
 
 #### 2. Productos por reseña del servicio
 
