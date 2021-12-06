@@ -64,7 +64,7 @@ def buscarProducto(productos, id_producto, elemento_con_id = 0):
             return p
 
 
-def imprimirTop(productos, n, mayores=True):
+def imprimirTop(productos, n, mayores=True, value=""):
     """
     Imprime en pantalla la información de los `n` productos con mayor valor (si `mejores`),
     en caso contrario los de menor valor.
@@ -75,7 +75,7 @@ def imprimirTop(productos, n, mayores=True):
     # recorremos e imprimimos los productos en el rango
     for prod, venta in rango:
         producto = buscarProducto(lifestore_products, prod) # buscamos el producto
-        print(f"{i}. ID: {producto[0]}\tNombre: {producto[1]}\nVentas: {venta}\nPrecio: {producto[2]}\nCategoría: {producto[3]}\nInventario: {producto[4]}", end="\n\n")
+        print(f"{i}. ID: {producto[0]}\tNombre: {producto[1]}\n{value}: {venta}\nPrecio: {producto[2]}\nCategoría: {producto[3]}\nInventario: {producto[4]}", end="\n\n")
         i += 1 if mayores else -1 # aumntamos la posición en uno por cada producto si ascendemos, en caso contrario le restamos
 
 
@@ -93,20 +93,20 @@ busquedas = ordenarDiccionario(busquedas)
 # Ventas
 print(f"{'-' * 40}\nLos mejores productos\n{'-' * 40}")
 print(f"{'*' * 5} Mejores productos por ventas:")
-imprimirTop(ventas, 5, mayores=True)
+imprimirTop(ventas, 5, mayores=True, value="Ventas")
 
 # Búsquedas
 print(f"{'*' * 5} Mejores productos por búsqueda:")
-imprimirTop(busquedas, 10, mayores=True)
+imprimirTop(busquedas, 10, mayores=True, value="Búsquedas")
 
 ## Top peores ventas y búsqueda
 print(f"{'-' * 40}\nLos peores productos\n{'-' * 40}")
 print(f"{'*' * 5} Peores productos por ventas:")
-imprimirTop(ventas, 5, mayores=False)
+imprimirTop(ventas, 5, mayores=False, value="Ventas")
 
 # Búsquedas
 print(f"{'*' * 5} Peores productos por búsqueda:")
-imprimirTop(busquedas, 10, mayores=False)
+imprimirTop(busquedas, 10, mayores=False, value="Búsquedas")
 
 #### 2. Productos por reseña del servicio
 
