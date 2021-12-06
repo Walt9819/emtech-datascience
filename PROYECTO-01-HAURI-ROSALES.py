@@ -7,28 +7,7 @@ from lifestore_file import lifestore_products, lifestore_searches, lifestore_sal
 # lifestore_products = [id_product, name, price, category, stock]
 
 
-#### Login
-# Usuario aceptado: admin
-# Contra aceptada: 12345
-
-# Pedir al usuario las credenciales de ingreso
-usr = input("Usuario: ")
-passw = input("Contraseña: ")
-
-intentos = 0
-# Si las ingresa de forma incorrecta volver a preguntar, 3 intentos y se cierra el programa
-while not (usr == "admin" and passw == "12345"):
-    print("El usuario y/o contraseña no son correctos. Vuelve a intentarlo")
-    if intentos >= 3:
-        sys.exit()
-    intentos += 1
-
-
-
-#### 1. Productos más vendidos y rezagados
-print(f"{'*' * 10} Productos más vendidos y rezagados {'*' * 10}", end="\n\n") # título
-
-
+#### Funciones de utilidad
 def contabilizarApariciones(datos, elemento_con_id_producto=0):
     """
     Cuenta el número de incidencias de un producto en un arreglo de datos.
@@ -79,6 +58,29 @@ def imprimirTop(productos, n, mayores=True, value=""):
         i += 1 if mayores else -1 # aumntamos la posición en uno por cada producto si ascendemos, en caso contrario le restamos
 
 
+
+#### Login
+# Usuario aceptado: admin
+# Contra aceptada: 12345
+
+# Pedir al usuario las credenciales de ingreso
+usr = input("Usuario: ")
+passw = input("Contraseña: ")
+
+intentos = 0
+LIM_INTENTOS = 3
+# Si las ingresa de forma incorrecta volver a preguntar, 3 intentos y se cierra el programa
+while not (usr == "admin" and passw == "12345"):
+    intentos += 1
+    print(f"El usuario y/o contraseña no son correctos. Vuelve a intentarlo.\nIntentos restantes: {LIM_INTENTOS - intentos}")
+    if intentos >= LIM_INTENTOS:
+        sys.exit()
+    usr = input("Usuario: ")
+    passw = input("Contraseña: ")
+
+
+#### 1. Productos más vendidos y rezagados
+print(f"{'*' * 60}\n1. Productos más vendidos y productos rezagados\n{'*' * 60}") # título
 ## ventas de productos
 ventas = contabilizarApariciones(lifestore_sales, 1) # diccionario con todas las ventas por producto; el id_product es el elemento _1_
 # ordenamos los valores
@@ -108,7 +110,22 @@ imprimirTop(ventas, 5, mayores=False, value="Ventas")
 print(f"{'*' * 5} Peores productos por búsqueda:")
 imprimirTop(busquedas, 10, mayores=False, value="Búsquedas")
 
+
+
 #### 2. Productos por reseña del servicio
+print(f"{'*' * 60}\n2. Productos por reseña en el servicio\n{'*' * 60}") # título
+
+## Ordenar por calificación (compra[1] es id_product, compra[2] es la calificación de la reseña)
+calificaciones = {compra[1]: compra[2] for compra in lifestore_sales}
+calificaciones = ordenarDiccionario(calificaciones)
+
+## Top mejores calificaciones
+print(f"{'-' * 40}\nLos mejores productos\n{'-' * 40}")
+imprimirTop(calificaciones, 5, mayores=True, value="Calificación")
+
+## Top peores calificaciones
+print(f"{'-' * 40}\nLos peores productos\n{'-' * 40}")
+imprimirTop(calificaciones, 5, mayores=False, value="Calificación")
 
 
 #### 3. Total de ingresos y ventas prmoedio mensuales, total anual y meses con más ventas al año
