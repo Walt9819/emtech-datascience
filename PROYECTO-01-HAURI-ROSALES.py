@@ -101,96 +101,135 @@ def agregarSiMayor(actuales, nuevo, max_valores=3):
     actuales.sort(key=lambda a: a[1], reverse=True) # regresamos el arreglo ordenado _inplace_ según el segundo valor de las tuplas para las siguientes comparaciones
 
 
+#### Interacción del usuario
+def main():
+    # todas las posibles acciones a realizar
+    acciones = [
+        ("Salir", sys.exit), 
+        ("Productos más vendidos o rezagados", productosMasVendidos), 
+        ("Productos por reseña en el servicio", productosPorResenas), 
+        ("Total de ingresos y ventas promedio mensuales, total anual y meses con más ventas al año", ingresosVentasMensualesAnuales)
+    ]
+    login() # el usuario tiene que ingresar las credenciales primero
+    opciones = "\n".join([f"{i}. {ac[0]}" for i, ac in enumerate(acciones)]) # hacemos una lista con las opciones
+    ans = None # empezamos sin selección
+    # hacemos un ciclo infinito
+    while True:
+        # preguntamos por la acción a analizar
+        ans = input(f"\n{'/'*80}\nHola, ¿qué análisis deseas explorar? Elige una de las opciones siguientes:\n{opciones}\nOpción: ")
+        # si no es un número, es inválida
+        try:
+            ans = int(ans)
+        except:
+            print("Operación inválida, por favor vuelve a intentarlo")
+            continue
+        # si da un número fuera de las opciones, es inválido
+        if ans >= len(acciones):
+            print("Operación inválida, por favor vuelve a intentarlo")
+            continue
+        # si es una de las opciones, ejecutar su respectiva función asociada
+        acciones[ans][1]() # ejecutarla
+
 #### Login
-# Usuario aceptado: admin
-# Contra aceptada: 12345
+def login():
+    # Usuario aceptado: admin
+    # Contra aceptada: 12345
 
-# Pedir al usuario las credenciales de ingreso
-usr = input("Usuario: ")
-passw = input("Contraseña: ")
-
-intentos = 0
-LIM_INTENTOS = 3
-# Si las ingresa de forma incorrecta volver a preguntar, 3 intentos y se cierra el programa
-while not (usr == "admin" and passw == "12345"):
-    intentos += 1
-    print(f"El usuario y/o contraseña no son correctos. Vuelve a intentarlo.\nIntentos restantes: {LIM_INTENTOS - intentos}")
-    if intentos >= LIM_INTENTOS:
-        sys.exit()
+    # Pedir al usuario las credenciales de ingreso
     usr = input("Usuario: ")
     passw = input("Contraseña: ")
 
+    intentos = 0
+    LIM_INTENTOS = 3
+    # Si las ingresa de forma incorrecta volver a preguntar, 3 intentos y se cierra el programa
+    while not (usr == "admin" and passw == "12345"):
+        intentos += 1
+        print(f"El usuario y/o contraseña no son correctos. Vuelve a intentarlo.\nIntentos restantes: {LIM_INTENTOS - intentos}")
+        if intentos >= LIM_INTENTOS:
+            sys.exit()
+        usr = input("Usuario: ")
+        passw = input("Contraseña: ")
+    return True
+
 
 #### 1. Productos más vendidos y rezagados
-print(f"{'*' * 60}\n1. Productos más vendidos y productos rezagados\n{'*' * 60}") # título
-## ventas de productos
-ventas = contabilizarApariciones(lifestore_sales, 1) # diccionario con todas las ventas por producto; el id_product es el elemento _1_
-# ordenamos los valores
-ventas = ordenarDiccionario(ventas)
+def productosMasVendidos():
+    print(f"{'*' * 60}\n1. Productos más vendidos y productos rezagados\n{'*' * 60}") # título
+    ## ventas de productos
+    ventas = contabilizarApariciones(lifestore_sales, 1) # diccionario con todas las ventas por producto; el id_product es el elemento _1_
+    # ordenamos los valores
+    ventas = ordenarDiccionario(ventas)
 
-## búsquedas de productos
-busquedas = contabilizarApariciones(lifestore_searches, 1) # diccionario con las búsquedas por producto; el id_product es el elemento _1_
-#ordenamos los valores
-busquedas = ordenarDiccionario(busquedas)
+    ## búsquedas de productos
+    busquedas = contabilizarApariciones(lifestore_searches, 1) # diccionario con las búsquedas por producto; el id_product es el elemento _1_
+    #ordenamos los valores
+    busquedas = ordenarDiccionario(busquedas)
 
-## Top mejores ventas y búsquedas
-# Ventas
-print(f"{'-' * 40}\nLos mejores productos\n{'-' * 40}")
-print(f"{'*' * 5} Mejores productos por ventas:")
-imprimirTop(ventas, 5, mayores=True, value="Ventas")
+    ## Top mejores ventas y búsquedas
+    # Ventas
+    print(f"{'-' * 40}\nLos mejores productos\n{'-' * 40}")
+    print(f"{'*' * 5} Mejores productos por ventas:")
+    imprimirTop(ventas, 5, mayores=True, value="Ventas")
 
-# Búsquedas
-print(f"{'*' * 5} Mejores productos por búsqueda:")
-imprimirTop(busquedas, 10, mayores=True, value="Búsquedas")
+    # Búsquedas
+    print(f"{'*' * 5} Mejores productos por búsqueda:")
+    imprimirTop(busquedas, 10, mayores=True, value="Búsquedas")
 
-## Top peores ventas y búsqueda
-print(f"{'-' * 40}\nLos peores productos\n{'-' * 40}")
-print(f"{'*' * 5} Peores productos por ventas:")
-imprimirTop(ventas, 5, mayores=False, value="Ventas")
+    ## Top peores ventas y búsqueda
+    print(f"{'-' * 40}\nLos peores productos\n{'-' * 40}")
+    print(f"{'*' * 5} Peores productos por ventas:")
+    imprimirTop(ventas, 5, mayores=False, value="Ventas")
 
-# Búsquedas
-print(f"{'*' * 5} Peores productos por búsqueda:")
-imprimirTop(busquedas, 10, mayores=False, value="Búsquedas")
+    # Búsquedas
+    print(f"{'*' * 5} Peores productos por búsqueda:")
+    imprimirTop(busquedas, 10, mayores=False, value="Búsquedas")
 
 
 
 #### 2. Productos por reseña del servicio
-print(f"{'*' * 60}\n2. Productos por reseña en el servicio\n{'*' * 60}") # título
+def productosPorResenas():
+    print(f"{'*' * 60}\n2. Productos por reseña en el servicio\n{'*' * 60}") # título
 
-## Ordenar por calificación (compra[1] es id_product, compra[2] es la calificación de la reseña)
-calificaciones = {compra[1]: compra[2] for compra in lifestore_sales}
-calificaciones = ordenarDiccionario(calificaciones)
+    ## Ordenar por calificación (compra[1] es id_product, compra[2] es la calificación de la reseña)
+    calificaciones = {compra[1]: compra[2] for compra in lifestore_sales}
+    calificaciones = ordenarDiccionario(calificaciones)
 
-## Top mejores calificaciones
-print(f"{'-' * 40}\nLos mejores productos\n{'-' * 40}")
-imprimirTop(calificaciones, 5, mayores=True, value="Calificación")
+    ## Top mejores calificaciones
+    print(f"{'-' * 40}\nLos mejores productos\n{'-' * 40}")
+    imprimirTop(calificaciones, 5, mayores=True, value="Calificación")
 
-## Top peores calificaciones
-print(f"{'-' * 40}\nLos peores productos\n{'-' * 40}")
-imprimirTop(calificaciones, 5, mayores=False, value="Calificación")
+    ## Top peores calificaciones
+    print(f"{'-' * 40}\nLos peores productos\n{'-' * 40}")
+    imprimirTop(calificaciones, 5, mayores=False, value="Calificación")
 
 
 #### 3. Total de ingresos y ventas promedio mensuales, total anual y meses con más ventas al año
-print(f"{'*' * 60}\n3. Total de ingresos y ventas promedio mensuales, total anual y meses con más ventas al año\n{'*' * 60}") # título
+def ingresosVentasMensualesAnuales():
+    print(f"{'*' * 60}\n3. Total de ingresos y ventas promedio mensuales, total anual y meses con más ventas al año\n{'*' * 60}") # título
 
-## Agrupamos las ventas por mes y año
-ventas = ventasPorFecha(lifestore_sales, lifestore_products) # agrupamos por años y meses
+    ## Agrupamos las ventas por mes y año
+    ventas = ventasPorFecha(lifestore_sales, lifestore_products) # agrupamos por años y meses
 
-## Desplegamos el resumen de ventas por mes para cada año
-for y in sorted(ventas):
-    months = ventas[y] # obtenemos los diccionarios de este año
-    print(f"{'-' * 40}\nVentas para el año {y}\n{'-' * 40}")
-    total = 0 # ventas totales anuales
-    mejores = [] # lista con los mejores meses en ventas
-    # desplegamos la lista de ventas por mes
-    for m in sorted(months):
-        valores = months[m] # obtenemos este mes del diccionario
-        nVentas = valores["numeroVentas"]
-        mVentas = valores["montoVentas"]
-        total += mVentas # incrementamos las ganancias anuales
-        agregarSiMayor(mejores, (m, nVentas)) # si tiene más ventas que los anteriores, lo agregamos
-        print(f"Mes: {m}\nVentas: {nVentas}\nMonto de venta promedio: {mVentas / nVentas}", end="\n\n")
-    print(f"Ganancias totales anuales: {total}", end="\n\n")
-    print(f"Meses con mayor número de ventas: ")
-    for mes, nV in mejores:
-        print(f"Mes: {mes}\tNúmero de ventas: {nV}")
+    ## Desplegamos el resumen de ventas por mes para cada año
+    for y in sorted(ventas):
+        months = ventas[y] # obtenemos los diccionarios de este año
+        print(f"{'-' * 40}\nVentas para el año {y}\n{'-' * 40}")
+        total = 0 # ventas totales anuales
+        mejores = [] # lista con los mejores meses en ventas
+        # desplegamos la lista de ventas por mes
+        for m in sorted(months):
+            valores = months[m] # obtenemos este mes del diccionario
+            nVentas = valores["numeroVentas"]
+            mVentas = valores["montoVentas"]
+            total += mVentas # incrementamos las ganancias anuales
+            agregarSiMayor(mejores, (m, nVentas)) # si tiene más ventas que los anteriores, lo agregamos
+            print(f"Mes: {m}\nVentas: {nVentas}\nMonto de venta promedio: {mVentas / nVentas}", end="\n\n")
+        print(f"Ganancias totales anuales: {total}", end="\n\n")
+        print(f"Meses con mayor número de ventas: ")
+        for mes, nV in mejores:
+            print(f"Mes: {mes}\tNúmero de ventas: {nV}")
+
+
+# Ejecutar la función main primero
+if __name__ == "__main__":
+    main()
