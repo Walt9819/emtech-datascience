@@ -58,6 +58,48 @@ def imprimirTop(productos, n, mayores=True, value=""):
         i += 1 if mayores else -1 # aumntamos la posición en uno por cada producto si ascendemos, en caso contrario le restamos
 
 
+def ventasPorFecha(ventas, productos, elemento_fecha = 3, elemento_producto=1, elemento_precio_en_producto=0, caracter_fecha='/'):
+    """
+    Cuenta y acumula las ventas en ´ventas´ según la fecha en el elemento ´elemento_fecha´,
+    separada en el formato ´d/m/a´ con separador ´caracter_fecha´.
+    Regresa un diccionario con llaves de cada año disponible, cada uno con los meses de venta
+    como llave, teniendo dos valores ´numeroVentas´ y ´montoVentas´, el primero con el número total
+    de ventas ese mes, y el segundo el monto total de dichas ventas. 
+    """
+    ventas_total = {}
+    # guardar para cada año y cada mes las ventas realizadas
+    for venta in ventas:
+        producto = venta[elemento_producto] # obtener el producto
+        fecha = venta[elemento_fecha] # obtener la fecha
+        fecha = fecha.split(caracter_fecha) # separar día, mes y año
+        day = fecha[0]
+        month = int(fecha[1])
+        year = int(fecha[2])
+        # guardar en el diccionario con la llave del año
+        if not year in ventas_total.keys():
+            ventas_total[year] = {} # diccionario para los meses de este año
+        if not month in ventas_total[year].keys():
+            ventas_total[year][month] = {"numeroVentas": 0, "montoVentas": 0} # agregamos el mes si es que todavía no existe, con dos llaves: `numeroVentas` (cantidad de ventas realizadas) y `montoVentas` (monto acumulado de las ventas)
+        ventas_total[year][month]["numeroVentas"] += 1 # aumentamos en 1 las ventas de este mes
+        ventas_total[year][month]["montoVentas"] += buscarProducto(productos, producto)[elemento_precio_en_producto] # obtenemos el precio del producto comprado
+    return ventas_total
+
+
+def agregarSiMayor(actuales, nuevo, max_valores=3):
+    """
+    Revisa si el monto en la tupla ´nuevo´ es mayor al menor que ya
+    había en las tuplas ´actuales´, si sí reemplaza al menor. Agrega valores
+    hasta tener al menos los ´max_valores´ mayores
+    """
+    # si no tenemos el número máximo de meses todavía, agregamos el nuevo
+    if len(actuales) < max_valores:
+        actuales.append(nuevo)
+    # si el menor valor de los actuales es menor que el nuevo, entonces lo va a reemplazar
+    # en las tuplas el primer valor es el mes (´nuevo[0]´) y el segundo el monto (´nuevo[1]´)
+    elif actuales[-1][1] < nuevo[1]:
+        actuales[-1] = nuevo
+    actuales.sort(key=lambda a: a[1], reverse=True) # regresamos el arreglo ordenado _inplace_ según el segundo valor de las tuplas para las siguientes comparaciones
+
 
 #### Login
 # Usuario aceptado: admin
@@ -128,5 +170,27 @@ print(f"{'-' * 40}\nLos peores productos\n{'-' * 40}")
 imprimirTop(calificaciones, 5, mayores=False, value="Calificación")
 
 
-#### 3. Total de ingresos y ventas prmoedio mensuales, total anual y meses con más ventas al año
+#### 3. Total de ingresos y ventas promedio mensuales, total anual y meses con más ventas al año
+print(f"{'*' * 60}\n3. Total de ingresos y ventas promedio mensuales, total anual y meses con más ventas al año\n{'*' * 60}") # título
 
+## Agrupamos las ventas por mes y año
+ventas = ventasPorFecha(lifestore_sales, lifestore_products) # agrupamos por años y meses
+
+## Desplegamos el resumen de ventas por mes para cada año
+for y in sorted(ventas):
+    months = ventas[y] # obtenemos los diccionarios de este año
+    print(f"{'-' * 40}\nVentas para el año {y}\n{'-' * 40}")
+    total = 0 # ventas totales anuales
+    mejores = [] # lista con los mejores meses en ventas
+    # desplegamos la lista de ventas por mes
+    for m in sorted(months):
+        valores = months[m] # obtenemos este mes del diccionario
+        nVentas = valores["numeroVentas"]
+        mVentas = valores["montoVentas"]
+        total += mVentas # incrementamos las ganancias anuales
+        agregarSiMayor(mejores, (m, nVentas)) # si tiene más ventas que los anteriores, lo agregamos
+        print(f"Mes: {m}\nVentas: {nVentas}\nMonto de venta promedio: {mVentas / nVentas}", end="\n\n")
+    print(f"Ganancias totales anuales: {total}", end="\n\n")
+    print(f"Meses con mayor número de ventas: ")
+    for mes, nV in mejores:
+        print(f"Mes: {mes}\tNúmero de ventas: {nV}")
