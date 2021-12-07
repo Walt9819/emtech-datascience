@@ -101,16 +101,7 @@ def agregarSiMayor(actuales, nuevo, max_valores=3):
     actuales.sort(key=lambda a: a[1], reverse=True) # regresamos el arreglo ordenado _inplace_ según el segundo valor de las tuplas para las siguientes comparaciones
 
 
-#### Interacción del usuario
-def main():
-    # todas las posibles acciones a realizar
-    acciones = [
-        ("Salir", sys.exit), 
-        ("Productos más vendidos o rezagados", productosMasVendidos), 
-        ("Productos por reseña en el servicio", productosPorResenas), 
-        ("Total de ingresos y ventas promedio mensuales, total anual y meses con más ventas al año", ingresosVentasMensualesAnuales)
-    ]
-    login() # el usuario tiene que ingresar las credenciales primero
+def seleccionDeOpcion(acciones):
     opciones = "\n".join([f"{i}. {ac[0]}" for i, ac in enumerate(acciones)]) # hacemos una lista con las opciones
     ans = None # empezamos sin selección
     # hacemos un ciclo infinito
@@ -129,6 +120,20 @@ def main():
             continue
         # si es una de las opciones, ejecutar su respectiva función asociada
         acciones[ans][1]() # ejecutarla
+
+
+#### Interacción del usuario
+def main():
+    login() # el usuario tiene que ingresar las credenciales primero
+    # todas las posibles acciones a realizar
+    acciones = [
+        ("Salir", sys.exit), 
+        ("Productos más vendidos o rezagados", productosMasVendidos), 
+        ("Productos por reseña en el servicio", productosPorResenas), 
+        ("Total de ingresos y ventas promedio mensuales, total anual y meses con más ventas al año", ingresosVentasMensualesAnuales)
+    ]
+    seleccionDeOpcion(acciones) # permitir al usuario seleccionar la opción deseada
+    
 
 #### Login
 def login():
@@ -164,7 +169,7 @@ def productosMasVendidos():
     busquedas = contabilizarApariciones(lifestore_searches, 1) # diccionario con las búsquedas por producto; el id_product es el elemento _1_
     #ordenamos los valores
     busquedas = ordenarDiccionario(busquedas)
-
+    
     ## Top mejores ventas y búsquedas
     # Ventas
     print(f"{'-' * 40}\nLos mejores productos\n{'-' * 40}")
