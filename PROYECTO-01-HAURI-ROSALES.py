@@ -62,7 +62,7 @@ def imprimirProducto(producto, i, value=None):
     """
     Imprime información importante de un producto de forma legible
     """
-    print(f"{i}. ID: {producto[0]}\tNombre: {producto[1]}\n{str(value[0]) + ':' + str(value[1]) if value else ''}Precio: {producto[2]}\nCategoría: {producto[3]}\nInventario: {producto[4]}", end="\n\n")
+    print(f"{i}. ID: {producto[0]}\tNombre: {producto[1]}{'\n' + str(value[0]) + ':' + str(value[1]) if value else ''}\nPrecio: {producto[2]}\nCategoría: {producto[3]}\nInventario: {producto[4]}", end="\n\n")
 
 
 def ventasPorFecha(ventas, productos, elemento_fecha = 3, elemento_producto=1, elemento_precio_en_producto=0, caracter_fecha='/'):
@@ -127,6 +127,29 @@ def seleccionDeOpcion(acciones):
             continue
         # si es una de las opciones, ejecutar su respectiva función asociada
         acciones[ans][1]() # ejecutarla
+
+
+def conteoPorCategoria(todos_productos, conteo_productos):
+    """
+    Revisa y clasifica los productos por categoría y revisa cuántos aparecen con conteo y cuántos no.
+    Regresa el total de productos por categoría, y el total sin conteo
+    """
+    productosConteo = [k[0] for k in conteo_productos]
+    sinConteo = {}
+    total = {}
+    for producto in todos_productos:
+        cat = producto[3]
+        if cat in total.keys():
+            total[cat] += 1
+        else:
+            total[cat] = 1
+        if not producto[0] in productosConteo:
+            if cat in sinConteo.keys():
+                sinConteo[cat] += 1
+            else:
+                sinConteo[cat] = 1
+    return total, sinConteo
+
 
 
 #### Interacción del usuario
@@ -201,22 +224,15 @@ def productosMasVendidos():
     print(f"{'-' * 40}\nSin movimiento\n{'-' * 40}")
     # Ventas
     print(f"{'*' * 5} Productos sin ventas por categoría:")
-    productosConVentas = [k[0] for k in ventas]
-    sinVentas = {}
-    for i, producto in enumerate([producto for producto in lifestore_products if producto[0] not in productosConVentas]):
-        #imprimirProducto(k, i)
-        cat = producto[3]
-        if cat in sinVentas.keys():
-            sinVentas[cat] += 1
-        else:
-            sinVentas[cat] = 1
-    print("Categorías con productos sin ventas")
-    for k, v in sinVentas.items():
-        print(f"Categoría: {k}\tProductos sin ventas: {v}")
+    total, sinVentas = conteoPorCategoria(lifestore_products, ventas)
+    for k in total.keys():
+        print(f"Categoría: {k}\nTotal de productos: {total[k]}\nProductos sin ventas: {sinVentas[k] if k in sinVentas.keys() else '0'}", end='\n\n')
 
     # Búsquedas
-    #print(f"{'*' * 5} Peores productos por búsqueda:")
-    #imprimirTop(busquedas, 10, mayores=False, value="Búsquedas")
+    print(f"{'*' * 5} Productos sin búsquedas por categoría:")
+    total, sinBusquedas = conteoPorCategoria(lifestore_products, busquedas)
+    for k in total.keys():
+        print(f"Categoría: {k}\nTotal de productos: {total[k]}\nProductos sin búsquedas: {sinBusquedas[k] if k in sinBusquedas.keys() else '0'}", end='\n\n')
 
 
 
