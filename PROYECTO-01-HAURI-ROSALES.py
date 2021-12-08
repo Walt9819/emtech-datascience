@@ -62,7 +62,7 @@ def imprimirProducto(producto, i, value=None):
     """
     Imprime información importante de un producto de forma legible
     """
-    print(f"{i}. ID: {producto[0]}\tNombre: {producto[1]}{'\n' + str(value[0]) + ':' + str(value[1]) if value else ''}\nPrecio: {producto[2]}\nCategoría: {producto[3]}\nInventario: {producto[4]}", end="\n\n")
+    print(f"{i}. ID: {producto[0]}\tNombre: {producto[1]}{'\n' + str(value[0]) + ': ' + str(value[1]) if value else ''}\nPrecio: {producto[2]}\nCategoría: {producto[3]}\nInventario: {producto[4]}", end="\n\n")
 
 
 def ventasPorFecha(ventas, productos, elemento_fecha = 3, elemento_producto=1, elemento_precio_en_producto=0, caracter_fecha='/'):
