@@ -130,26 +130,28 @@ def seleccionDeOpcion(acciones):
         acciones[ans][1]() # ejecutarla
 
 
-def conteoPorCategoria(todos_productos, conteo_productos):
+def conteoPorCategoria(todos_productos, conteo_productos, id_categoria_producto=3):
     """
     Revisa y clasifica los productos por categoría y revisa cuántos aparecen con conteo y cuántos no.
     Regresa el total de productos por categoría, y el total sin conteo
     """
-    productosConteo = [k[0] for k in conteo_productos]
-    sinConteo = {}
-    total = {}
+    productosConteo = [k[0] for k in conteo_productos] # elegir todos los productos con conteo
+    sinConteo = {} # productos en cada categoría sin conteo
+    total = {} # todos los productos por categiría
+    # para cada producto, agregarlo a su categoría, y si no tuvo conteo, agregarlo también a sin conteo
     for producto in todos_productos:
-        cat = producto[3]
+        cat = producto[id_categoria_producto] # obtenemos la categoría del producto
         if cat in total.keys():
             total[cat] += 1
         else:
             total[cat] = 1
         if not producto[0] in productosConteo:
+            # si no estuvo en el conteo, agregarlo a sin conteo
             if cat in sinConteo.keys():
                 sinConteo[cat] += 1
             else:
                 sinConteo[cat] = 1
-    return total, sinConteo
+    return total, sinConteo # regresamos ambos resultados
 
 
 
