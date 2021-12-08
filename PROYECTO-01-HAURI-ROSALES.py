@@ -62,10 +62,11 @@ def imprimirProducto(producto, i, value=None):
     """
     Imprime información importante de un producto de forma legible
     """
-    print(f"{i}. ID: {producto[0]}\tNombre: {producto[1]}{'\n' + str(value[0]) + ': ' + str(value[1]) if value else ''}\nPrecio: {producto[2]}\nCategoría: {producto[3]}\nInventario: {producto[4]}", end="\n\n")
+    vS = '\n' + str(value[0]) + ': ' + str(value[1]) if value else '' # con cierto valor si fue dado
+    print(f"{i}. ID: {producto[0]}\tNombre: {producto[1]}{vS}\nPrecio: {producto[2]}\nCategoría: {producto[3]}\nInventario: {producto[4]}", end="\n\n")
 
 
-def ventasPorFecha(ventas, productos, elemento_fecha = 3, elemento_producto=1, elemento_precio_en_producto=0, caracter_fecha='/'):
+def ventasPorFecha(ventas, productos, elemento_fecha = 3, elemento_producto=1, elemento_precio_en_producto=2, caracter_fecha='/'):
     """
     Cuenta y acumula las ventas en ´ventas´ según la fecha en el elemento ´elemento_fecha´,
     separada en el formato ´d/m/a´ con separador ´caracter_fecha´.
@@ -273,8 +274,8 @@ def ingresosVentasMensualesAnuales():
             mVentas = valores["montoVentas"]
             total += mVentas # incrementamos las ganancias anuales
             agregarSiMayor(mejores, (m, nVentas)) # si tiene más ventas que los anteriores, lo agregamos
-            print(f"Mes: {m}\nVentas: {nVentas}\nMonto de venta promedio: {mVentas / nVentas}", end="\n\n")
-        print(f"Ganancias totales anuales: {total}", end="\n\n")
+            print(f"Mes: {m}\nVentas: {nVentas}\nMonto de venta promedio: {mVentas / nVentas:.2f}", end="\n\n")
+        print(f"Ganancias totales anuales: {total:.2f}", end="\n\n")
         print(f"Meses con mayor número de ventas: ")
         for mes, nV in mejores:
             print(f"Mes: {mes}\tNúmero de ventas: {nV}")
