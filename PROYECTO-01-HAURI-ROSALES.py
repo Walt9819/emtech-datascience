@@ -54,8 +54,15 @@ def imprimirTop(productos, n, mayores=True, value=""):
     # recorremos e imprimimos los productos en el rango
     for prod, venta in rango:
         producto = buscarProducto(lifestore_products, prod) # buscamos el producto
-        print(f"{i}. ID: {producto[0]}\tNombre: {producto[1]}\n{value}: {venta}\nPrecio: {producto[2]}\nCategoría: {producto[3]}\nInventario: {producto[4]}", end="\n\n")
+        imprimirProducto(producto, i, (value, venta))
         i += 1 if mayores else -1 # aumntamos la posición en uno por cada producto si ascendemos, en caso contrario le restamos
+
+
+def imprimirProducto(producto, i, value=None):
+    """
+    Imprime información importante de un producto de forma legible
+    """
+    print(f"{i}. ID: {producto[0]}\tNombre: {producto[1]}\n{str(value[0]) + ':' + str(value[1]) if value else ''}Precio: {producto[2]}\nCategoría: {producto[3]}\nInventario: {producto[4]}", end="\n\n")
 
 
 def ventasPorFecha(ventas, productos, elemento_fecha = 3, elemento_producto=1, elemento_precio_en_producto=0, caracter_fecha='/'):
@@ -171,8 +178,8 @@ def productosMasVendidos():
     busquedas = ordenarDiccionario(busquedas)
     
     ## Top mejores ventas y búsquedas
-    # Ventas
     print(f"{'-' * 40}\nLos mejores productos\n{'-' * 40}")
+    # Ventas
     print(f"{'*' * 5} Mejores productos por ventas:")
     imprimirTop(ventas, 5, mayores=True, value="Ventas")
 
@@ -182,12 +189,34 @@ def productosMasVendidos():
 
     ## Top peores ventas y búsqueda
     print(f"{'-' * 40}\nLos peores productos\n{'-' * 40}")
+    # Ventas
     print(f"{'*' * 5} Peores productos por ventas:")
     imprimirTop(ventas, 5, mayores=False, value="Ventas")
 
     # Búsquedas
     print(f"{'*' * 5} Peores productos por búsqueda:")
     imprimirTop(busquedas, 10, mayores=False, value="Búsquedas")
+
+    ## Sin búsquedas ni ventas
+    print(f"{'-' * 40}\nSin movimiento\n{'-' * 40}")
+    # Ventas
+    print(f"{'*' * 5} Productos sin ventas por categoría:")
+    productosConVentas = [k[0] for k in ventas]
+    sinVentas = {}
+    for i, producto in enumerate([producto for producto in lifestore_products if producto[0] not in productosConVentas]):
+        #imprimirProducto(k, i)
+        cat = producto[3]
+        if cat in sinVentas.keys():
+            sinVentas[cat] += 1
+        else:
+            sinVentas[cat] = 1
+    print("Categorías con productos sin ventas")
+    for k, v in sinVentas.items():
+        print(f"Categoría: {k}\tProductos sin ventas: {v}")
+
+    # Búsquedas
+    #print(f"{'*' * 5} Peores productos por búsqueda:")
+    #imprimirTop(busquedas, 10, mayores=False, value="Búsquedas")
 
 
 
